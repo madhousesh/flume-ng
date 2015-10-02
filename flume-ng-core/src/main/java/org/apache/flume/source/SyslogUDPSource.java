@@ -86,6 +86,10 @@ public class SyslogUDPSource extends AbstractSource
       } catch (ChannelException ex) {
         logger.error("Error writting to channel", ex);
         return;
+      } catch (RuntimeException ex) {
+        counterGroup.incrementAndGet("events.dropped");
+        logger.error("Error parsing event from syslog stream, event dropped", ex);
+        return;
       }
     }
   }
