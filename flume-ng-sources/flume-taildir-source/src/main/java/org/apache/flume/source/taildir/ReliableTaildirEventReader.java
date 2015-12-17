@@ -186,7 +186,7 @@ public class ReliableTaildirEventReader implements ReliableEventReader {
       }
       logger.info("Last read was never committed - resetting position");
       long lastPos = currentFile.getPos();
-      currentFile.getRaf().seek(lastPos);
+      currentFile.updateFilePos(lastPos);
     }
     List<Event> events = currentFile.readEvents(numEvents, backoffWithoutNL, addByteOffset);
     if (events.isEmpty()) {
@@ -214,7 +214,7 @@ public class ReliableTaildirEventReader implements ReliableEventReader {
   @Override
   public void commit() throws IOException {
     if (!committed && currentFile != null) {
-      long pos = currentFile.getRaf().getFilePointer();
+      long pos = currentFile.getLineReadPos();
       currentFile.setPos(pos);
       currentFile.setLastUpdated(updateTime);
       committed = true;
