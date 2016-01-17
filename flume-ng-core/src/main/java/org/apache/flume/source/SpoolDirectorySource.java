@@ -45,9 +45,6 @@ Configurable, EventDrivenSource {
   private static final Logger logger = LoggerFactory
       .getLogger(SpoolDirectorySource.class);
 
-  // Delay used when polling for new files
-  private static final int POLL_DELAY_MS = 500;
-
   /* Config options */
   private String completedSuffix;
   private String spoolDirectory;
@@ -108,7 +105,7 @@ Configurable, EventDrivenSource {
 
     Runnable runner = new SpoolDirectoryRunnable(reader, sourceCounter);
     executor.scheduleWithFixedDelay(
-        runner, 0, POLL_DELAY_MS, TimeUnit.MILLISECONDS);
+        runner, 0, pollDelay, TimeUnit.MILLISECONDS);
 
     super.start();
     logger.debug("SpoolDirectorySource source started");
