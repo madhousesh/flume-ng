@@ -48,7 +48,7 @@ limitations under the License.
     <avro.version>${cdh.avro.version}</avro.version>
     <elasticsearch.version>0.90.1</elasticsearch.version>
     <javaVersion>1.7</javaVersion>
-    
+    <kafka.version>${cdh.kafka.version}</kafka.version>
     <kite.version>1.0.0</kite.version>
 
     <hadoop2.version>${cdh.hadoop.version}</hadoop2.version>
@@ -1459,12 +1459,12 @@ limitations under the License.
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka_2.10</artifactId>
-        <version>0.8.1.1</version>
+        <version>${kafka.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka_2.10</artifactId>
-        <version>0.8.1.1</version>
+        <version>${kafka.version}</version>
         <classifier>test</classifier>
         <scope>test</scope>
       </dependency>
