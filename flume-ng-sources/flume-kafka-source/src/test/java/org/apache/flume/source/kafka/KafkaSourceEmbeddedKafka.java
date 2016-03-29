@@ -71,7 +71,7 @@ public class KafkaSourceEmbeddedKafka {
     props.put("log.dir", dir.getAbsolutePath());
     if (properties != null)
       props.putAll(props);
-    KafkaConfig config = new KafkaConfig(props);
+    KafkaConfig config = new KafkaConfig(props, true);
     kafkaServer = new KafkaServerStartable(config);
     kafkaServer.startup();
     initProducer();
