@@ -84,7 +84,7 @@ public class SequenceGeneratorSource extends AbstractPollableSource implements
             break;
           }
         }
-        if(!batchArrayList.isEmpty()) {
+        if (!batchArrayList.isEmpty()) {
           getChannelProcessor().processEventBatch(batchArrayList);
           sourceCounter.incrementAppendBatchAcceptedCount();
           sourceCounter.addToEventAcceptedCount(batchArrayList.size());

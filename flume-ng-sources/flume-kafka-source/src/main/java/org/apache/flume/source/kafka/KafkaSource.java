@@ -134,18 +134,24 @@ public class KafkaSource extends AbstractPollableSource
    */
   public abstract class Subscriber<T> {
     public abstract void subscribe(KafkaConsumer<?, ?> consumer, SourceRebalanceListener listener);
-    public T get() {return null;}
+
+    public T get() {
+      return null;
+    }
   }
 
   private class TopicListSubscriber extends Subscriber<List<String>> {
     private List<String> topicList;
+
     public TopicListSubscriber(String commaSeparatedTopics) {
       this.topicList = Arrays.asList(commaSeparatedTopics.split("^\\s+|\\s*,\\s*|\\s+$"));
     }
+
     @Override
     public void subscribe(KafkaConsumer<?, ?> consumer, SourceRebalanceListener listener) {
       consumer.subscribe(topicList, listener);
     }
+
     @Override
     public List<String> get() {
       return topicList;
@@ -154,13 +160,16 @@ public class KafkaSource extends AbstractPollableSource
 
   private class PatternSubscriber extends Subscriber<Pattern> {
     private Pattern pattern;
+
     public PatternSubscriber(String regex) {
       this.pattern = Pattern.compile(regex);
     }
+
     @Override
     public void subscribe(KafkaConsumer<?, ?> consumer, SourceRebalanceListener listener) {
       consumer.subscribe(pattern, listener);
     }
+
     @Override
     public Pattern get() {
       return pattern;
@@ -334,21 +343,21 @@ public class KafkaSource extends AbstractPollableSource
     if (topicProperty != null && !topicProperty.isEmpty()) {
       // create subscriber that uses pattern-based subscription
       subscriber = new PatternSubscriber(topicProperty);
-    } else
-    if((topicProperty = context.getString(KafkaSourceConstants.TOPICS)) != null && !topicProperty.isEmpty()) {
+    } else if ((topicProperty = context.getString(KafkaSourceConstants.TOPICS)) != null &&
+               !topicProperty.isEmpty()) {
       // create subscriber that uses topic list subscription
       subscriber = new TopicListSubscriber(topicProperty);
-    } else
-    if (subscriber == null) {
+    } else if (subscriber == null) {
       throw new ConfigurationException("At least one Kafka topic must be specified.");
     }
 
     batchUpperLimit = context.getInteger(KafkaSourceConstants.BATCH_SIZE,
-            KafkaSourceConstants.DEFAULT_BATCH_SIZE);
+                                         KafkaSourceConstants.DEFAULT_BATCH_SIZE);
     maxBatchDurationMillis = context.getInteger(KafkaSourceConstants.BATCH_DURATION_MS,
-            KafkaSourceConstants.DEFAULT_BATCH_DURATION);
+                                                KafkaSourceConstants.DEFAULT_BATCH_DURATION);
 
-    useAvroEventFormat = context.getBoolean(KafkaSourceConstants.AVRO_EVENT, KafkaSourceConstants.DEFAULT_AVRO_EVENT);
+    useAvroEventFormat = context.getBoolean(KafkaSourceConstants.AVRO_EVENT,
+                                            KafkaSourceConstants.DEFAULT_AVRO_EVENT);
 
     if (log.isDebugEnabled()) {
       log.debug(KafkaSourceConstants.AVRO_EVENT + " set to: {}", useAvroEventFormat);
@@ -401,7 +410,6 @@ public class KafkaSource extends AbstractPollableSource
       counter = new KafkaSourceCounter(getName());
     }
   }
-
 
   // We can remove this once the properties are officially deprecated
   private void translateOldProperties(Context ctx) {
@@ -593,7 +601,6 @@ public class KafkaSource extends AbstractPollableSource
     return offsets;
   }
 }
-
 
 class SourceRebalanceListener implements ConsumerRebalanceListener {
   private static final Logger log = LoggerFactory.getLogger(SourceRebalanceListener.class);
