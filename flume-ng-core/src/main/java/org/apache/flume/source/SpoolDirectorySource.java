@@ -72,6 +72,8 @@ Configurable, EventDrivenSource {
   private boolean hitChannelException = false;
   private int maxBackoff;
   private ConsumeOrder consumeOrder;
+  private int pollDelay;
+  private boolean recursiveDirectorySearch;
 
   @Override
   public synchronized void start() {
@@ -97,6 +99,7 @@ Configurable, EventDrivenSource {
           .inputCharset(inputCharset)
           .decodeErrorPolicy(decodeErrorPolicy)
           .consumeOrder(consumeOrder)
+          .recursiveDirectorySearch(recursiveDirectorySearch)
           .build();
     } catch (IOException ioe) {
       throw new FlumeException("Error instantiating spooling event parser",
@@ -164,9 +167,14 @@ Configurable, EventDrivenSource {
     deserializerType = context.getString(DESERIALIZER, DEFAULT_DESERIALIZER);
     deserializerContext = new Context(context.getSubProperties(DESERIALIZER +
         "."));
-    
-    consumeOrder = ConsumeOrder.valueOf(context.getString(CONSUME_ORDER, 
+
+    consumeOrder = ConsumeOrder.valueOf(context.getString(CONSUME_ORDER,
         DEFAULT_CONSUME_ORDER.toString()).toUpperCase(Locale.ENGLISH));
+
+    pollDelay = context.getInteger(POLL_DELAY, DEFAULT_POLL_DELAY);
+
+    recursiveDirectorySearch = context.getBoolean(RECURSIVE_DIRECTORY_SEARCH,
+        DEFAULT_RECURSIVE_DIRECTORY_SEARCH);
 
     // "Hack" to support backwards compatibility with previous generation of
     // spooling directory source, which did not support deserializers
@@ -208,6 +216,11 @@ Configurable, EventDrivenSource {
   @VisibleForTesting
   protected SourceCounter getSourceCounter() {
     return sourceCounter;
+  }
+
+  @VisibleForTesting
+  protected boolean getRecursiveDirectorySearch() {
+    return recursiveDirectorySearch;
   }
 
   private class SpoolDirectoryRunnable implements Runnable {
