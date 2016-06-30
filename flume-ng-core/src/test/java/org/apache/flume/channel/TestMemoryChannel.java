@@ -33,11 +33,12 @@ import org.apache.flume.event.SimpleEvent;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import static org.fest.reflect.core.Reflection.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import static org.fest.reflect.core.Reflection.field;
 
 public class TestMemoryChannel {
 
@@ -83,7 +84,7 @@ public class TestMemoryChannel {
 
     Transaction transaction = channel.getTransaction();
     transaction.begin();
-    for(int i=0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
       channel.put(EventBuilder.withBody(String.format("test event %d", i).getBytes()));
     }
     transaction.commit();
@@ -126,7 +127,7 @@ public class TestMemoryChannel {
     parms.put("transactionCapacity", "2");
     context.putAll(parms);
     Configurables.configure(channel, context);
-    for(int i=0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
       transaction = channel.getTransaction();
       transaction.begin();
       Assert.assertNotNull(channel.take());
@@ -135,7 +136,7 @@ public class TestMemoryChannel {
     }
   }
 
-  @Test(expected=ChannelException.class)
+  @Test(expected = ChannelException.class)
   public void testTransactionPutCapacityOverload() {
     Context context = new Context();
     Map<String, String> parms = new HashMap<String, String>();
@@ -153,7 +154,7 @@ public class TestMemoryChannel {
     Assert.fail();
   }
 
-  @Test(expected=ChannelException.class)
+  @Test(expected = ChannelException.class)
   public void testCapacityOverload() {
     Context context = new Context();
     Map<String, String> parms = new HashMap<String, String>();
@@ -238,7 +239,7 @@ public class TestMemoryChannel {
     tx.close();
   }
 
-  @Test(expected=ChannelException.class)
+  @Test(expected = ChannelException.class)
   public void testByteCapacityOverload() {
     Context context = new Context();
     Map<String, String> parms = new HashMap<String, String>();
@@ -301,8 +302,7 @@ public class TestMemoryChannel {
     try {
       channel.put(EventBuilder.withBody(eventBody));
       throw new RuntimeException("Put was able to overflow byte capacity.");
-    } catch (ChannelException ce)
-    {
+    } catch (ChannelException ce) {
       //Do nothing
     }
 
@@ -323,8 +323,7 @@ public class TestMemoryChannel {
     try {
       channel.put(EventBuilder.withBody(eventBody));
       throw new RuntimeException("Put was able to overflow byte capacity.");
-    } catch (ChannelException ce)
-    {
+    } catch (ChannelException ce) {
       //Do nothing
     }
     tx.commit();
@@ -387,7 +386,7 @@ public class TestMemoryChannel {
       channel.put(EventBuilder.withBody(eventBody));
       tx.commit();
       Assert.fail();
-    } catch ( ChannelException e ) {
+    } catch (ChannelException e) {
       //success
       tx.rollback();
     } finally {
@@ -414,12 +413,12 @@ public class TestMemoryChannel {
     tx = channel.getTransaction();
     tx.begin();
     try {
-      for(int i = 0; i < 2; i++) {
+      for (int i = 0; i < 2; i++) {
         channel.put(EventBuilder.withBody(eventBody));
       }
       tx.commit();
       Assert.fail();
-    } catch ( ChannelException e ) {
+    } catch (ChannelException e) {
       //success
       tx.rollback();
     } finally {
@@ -435,12 +434,12 @@ public class TestMemoryChannel {
     tx.begin();
 
     try {
-      for(int i = 0; i < 15; i++) {
+      for (int i = 0; i < 15; i++) {
         channel.put(EventBuilder.withBody(eventBody));
       }
       tx.commit();
       Assert.fail();
-    } catch ( ChannelException e ) {
+    } catch (ChannelException e) {
       //success
       tx.rollback();
     } finally {
@@ -455,12 +454,12 @@ public class TestMemoryChannel {
     tx.begin();
 
     try {
-      for(int i = 0; i < 25; i++) {
+      for (int i = 0; i < 25; i++) {
         channel.put(EventBuilder.withBody(eventBody));
       }
       tx.commit();
       Assert.fail();
-    } catch ( ChannelException e ) {
+    } catch (ChannelException e) {
       //success
       tx.rollback();
     } finally {

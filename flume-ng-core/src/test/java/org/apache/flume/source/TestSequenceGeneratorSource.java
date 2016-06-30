@@ -37,6 +37,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestSequenceGeneratorSource {
 
   private PollableSource source;
