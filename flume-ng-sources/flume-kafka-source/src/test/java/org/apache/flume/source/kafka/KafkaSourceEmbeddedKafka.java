@@ -30,7 +30,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +62,7 @@ public class KafkaSourceEmbeddedKafka {
     props.put("port", String.valueOf(serverPort));
     props.put("log.dir", dir.getAbsolutePath());
     if (properties != null) {
-      props.putAll(props);
+      props.putAll(properties);
     }
     KafkaConfig config = new KafkaConfig(props);
     kafkaServer = new KafkaServerStartable(config);
