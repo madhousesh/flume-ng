@@ -78,7 +78,7 @@ public class KafkaSourceUtil {
       kafkaProps.put(prop.getKey(), prop.getValue());
       if (log.isDebugEnabled()) {
         log.debug("Reading a Kafka Producer Property: key: "
-                + prop.getKey() + ", value: " + prop.getValue());
+                + prop.getKey());
       }
     }
   }
