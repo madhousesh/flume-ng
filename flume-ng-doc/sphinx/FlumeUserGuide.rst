@@ -1189,7 +1189,7 @@ Twitter 1% firehose Source (experimental)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
-  This source is hightly experimental and may change between minor versions of Flume.
+  This source is highly experimental and may change between minor versions of Flume.
   Use at your own risk.
 
 Experimental source that connects via Streaming API to the 1% sample twitter
