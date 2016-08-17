@@ -771,6 +771,7 @@ public class SpillableMemoryChannel extends FileChannel {
       drainOrder.putOverflow(overFlowCount);
       totalStored.release(overFlowCount);
     }
+    channelCounter.start();
     int totalCount =  overFlowCount + memQueue.size();
     channelCounter.setChannelCapacity(memoryCapacity + getOverflowCapacity());
     channelCounter.setChannelSize(totalCount);
