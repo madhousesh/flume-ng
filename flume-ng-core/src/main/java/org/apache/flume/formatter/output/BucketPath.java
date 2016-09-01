@@ -18,6 +18,14 @@
 
 package org.apache.flume.formatter.output;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import org.apache.flume.Clock;
+import org.apache.flume.SystemClock;
+import org.apache.flume.tools.TimestampRoundDownUtil;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,8 +50,8 @@ public class BucketPath {
    * These are useful to other classes which might want to search for tags in
    * strings.
    */
-  final public static String TAG_REGEX = "\\%(\\w|\\%)|\\%\\{([\\w\\.-]+)\\}";
-  final public static Pattern tagPattern = Pattern.compile(TAG_REGEX);
+  public static final String TAG_REGEX = "%(\\w|%)|%\\{([\\w\\.-]+)\\}|%\\[(\\w+)\\]";
+  public static final Pattern tagPattern = Pattern.compile(TAG_REGEX);
 
   private static Clock clock = new SystemClock();
 
@@ -212,6 +220,35 @@ public class BucketPath {
 	return simpleDateFormat;
   }
   
+
+  /**
+   * Not intended as a public API
+   */
+  @VisibleForTesting
+  protected static String replaceStaticString(String key) {
+    String replacementString = "";
+    try {
+      InetAddress addr = InetAddress.getLocalHost();
+      String s = key.toLowerCase();
+      if (s.equals("localhost")) {
+        replacementString = addr.getHostName();
+
+      } else if (s.equals("ip")) {
+        replacementString = addr.getHostAddress();
+
+      } else if (s.equals("fqdn")) {
+        replacementString = addr.getCanonicalHostName();
+
+      } else {
+        throw new RuntimeException("The static escape string '" + key + "'"
+            + " was provided but does not match any of (localhost,IP,FQDN)");
+      }
+    } catch (UnknownHostException e) {
+      throw new RuntimeException("Flume wasn't able to parse the static escape "
+              + " sequence '" + key + "' due to UnkownHostException.", e);
+    }
+    return replacementString;
+  }
 
   /**
    * Not intended as a public API
@@ -421,6 +458,11 @@ public class BucketPath {
           replacement = "";
 //          LOG.warn("Tag " + matcher.group(2) + " not found");
         }
+
+      // Group 3 is the %[...] pattern.
+      } else if (matcher.group(3) != null) {
+        replacement = replaceStaticString(matcher.group(3));
+
       } else {
         // The %x pattern.
         // Since we know the match is a single character, we can
