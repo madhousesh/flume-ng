@@ -63,7 +63,7 @@ public class TestSyslogTcpSource {
 
     Configurables.configure(channel, new Context());
 
-    List<Channel> channels = new ArrayList<Channel>();
+    List<Channel> channels = new ArrayList<>();
     channels.add(channel);
 
     ChannelSelector rcs = new ReplicatingChannelSelector();
@@ -85,18 +85,12 @@ public class TestSyslogTcpSource {
     // Write some message to the syslog port
     InetSocketAddress addr = source.getBoundAddress();
     for (int i = 0; i < 10 ; i++) {
-      Socket syslogSocket = null;
-      try {
-        syslogSocket = new Socket(addr.getAddress(), addr.getPort());
+      try (Socket syslogSocket = new Socket(addr.getAddress(), addr.getPort())) {
         syslogSocket.getOutputStream().write(bodyWithTandH.getBytes());
-      } finally {
-        if (syslogSocket != null) {
-          syslogSocket.close();
-        }
       }
     }
 
-    List<Event> channelEvents = new ArrayList<Event>();
+    List<Event> channelEvents = new ArrayList<>();
     Transaction txn = channel.getTransaction();
     txn.begin();
     for (int i = 0; i < 10; i++) {

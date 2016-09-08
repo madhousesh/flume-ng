@@ -101,7 +101,7 @@ public class TestSyslogUdpSource {
       sendDatagramPacket(datagramPacket);
     }
 
-    List<Event> channelEvents = new ArrayList<Event>();
+    List<Event> channelEvents = new ArrayList<>();
     Transaction txn = channel.getTransaction();
     txn.begin();
     for (int i = 0; i < 10; i++) {
@@ -144,7 +144,7 @@ public class TestSyslogUdpSource {
       sendDatagramPacket(datagramPacket);
     }
 
-    List<Event> channelEvents = new ArrayList<Event>();
+    List<Event> channelEvents = new ArrayList<>();
     Transaction txn = channel.getTransaction();
     txn.begin();
     for (int i = 0; i < 10; i++) {
@@ -202,13 +202,6 @@ public class TestSyslogUdpSource {
     channel.take();
     commitAndCloseTransaction(txn);
 
-    // Retrying up to 10 times while the acceptedCount == 0 because the event processing in
-    // SyslogUDPSource is handled on a separate thread by Netty so message delivery,
-    // thus the sourceCounter's increment can be delayed resulting in a flaky test
-    for (int i = 0; i < 10 && source.getSourceCounter().getEventAcceptedCount() == 0; i++) {
-      Thread.sleep(100);
-    }
-
     Assert.assertEquals(1, source.getSourceCounter().getEventAcceptedCount());
     Assert.assertEquals(1, source.getSourceCounter().getEventReceivedCount());
   }
@@ -219,14 +212,8 @@ public class TestSyslogUdpSource {
   }
 
   private void sendDatagramPacket(DatagramPacket datagramPacket) throws IOException {
-    DatagramSocket syslogSocket = null;
-    try {
-      syslogSocket = new DatagramSocket();
+    try (DatagramSocket syslogSocket = new DatagramSocket()) {
       syslogSocket.send(datagramPacket);
-    } finally {
-      if (syslogSocket != null) {
-        syslogSocket.close();
-      }
     }
   }
 
