@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,12 +83,17 @@ public class TestSyslogTcpSource {
     init(keepFields);
     source.start();
     // Write some message to the syslog port
-    Socket syslogSocket;
+    InetSocketAddress addr = source.getBoundAddress();
     for (int i = 0; i < 10 ; i++) {
-      syslogSocket = new Socket(
-        InetAddress.getLocalHost(), source.getSourcePort());
-      syslogSocket.getOutputStream().write(bodyWithTandH.getBytes());
-      syslogSocket.close();
+      Socket syslogSocket = null;
+      try {
+        syslogSocket = new Socket(addr.getAddress(), addr.getPort());
+        syslogSocket.getOutputStream().write(bodyWithTandH.getBytes());
+      } finally {
+        if (syslogSocket != null) {
+          syslogSocket.close();
+        }
+      }
     }
 
     List<Event> channelEvents = new ArrayList<Event>();
@@ -151,6 +157,13 @@ public class TestSyslogTcpSource {
   @Test
   public void testKeepTimestamp() throws IOException{
     runKeepFieldsTest("timestamp");
+  }
+
+  @Test
+  public void testSourceCounter() throws IOException {
+    runKeepFieldsTest("all");
+    Assert.assertEquals(10, source.getSourceCounter().getEventAcceptedCount());
+    Assert.assertEquals(10, source.getSourceCounter().getEventReceivedCount());
   }
 }
 
