@@ -1358,14 +1358,14 @@ mainly for testing. During retries it keeps the body of the retried messages the
 that the number of unique events - after de-duplication at destination - is expected to be
 equal to the specified ``totalEvents``. Required properties are in **bold**.
 
-==============  ===========  ========================================
-Property Name   Default      Description
-==============  ===========  ========================================
+==============  ===============  ========================================
+Property Name   Default          Description
+==============  ===============  ========================================
 **channels**    --
-**type**        --           The component type name, needs to be ``seq``
-selector.type                replicating or multiplexing
-selector.*      replicating  Depends on the selector.type value
-interceptors    --           Space-separated list of interceptors
+**type**        --               The component type name, needs to be ``seq``
+selector.type                    replicating or multiplexing
+selector.*      replicating      Depends on the selector.type value
+interceptors    --               Space-separated list of interceptors
 interceptors.*
 batchSize       1                Number of events to attempt to process per request loop.
 totalEvents     Long.MAX_VALUE   Number of unique events sent by the source.
