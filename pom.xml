@@ -74,6 +74,7 @@ limitations under the License.
     <module>flume-ng-tests</module>
     <module>flume-tools</module>
     <module>flume-ng-auth</module>
+    <module>flume-shared</module>
   </modules>
 
   <profiles>
@@ -952,7 +953,6 @@ limitations under the License.
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.10</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -1258,6 +1258,13 @@ limitations under the License.
        <artifactId>flume-recoverable-memory-channel</artifactId>
        <version>1.6.0-cdh5.8.4-SNAPSHOT</version>
      </dependency>
+
+      <dependency>
+        <groupId>org.apache.flume.flume-shared</groupId>
+        <artifactId>flume-shared-kafka-test</artifactId>
+        <version>1.6.0-cdh5.8.4-SNAPSHOT</version>
+        <scope>test</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.flume.flume-ng-sinks</groupId>
