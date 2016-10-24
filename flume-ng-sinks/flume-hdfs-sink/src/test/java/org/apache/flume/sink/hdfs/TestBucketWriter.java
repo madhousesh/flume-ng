@@ -252,62 +252,56 @@ public class TestBucketWriter {
 
   @Test
   public void testFileSuffixNotGiven() throws IOException, InterruptedException {
-      final int ROLL_INTERVAL = 1000; // seconds. Make sure it doesn't change in course of test
-      final String suffix = null;
+    final int ROLL_INTERVAL = 1000; // seconds. Make sure it doesn't change in course of test
+    final String suffix = null;
 
-      MockHDFSWriter hdfsWriter = new MockHDFSWriter();
-      BucketWriter bucketWriter = new BucketWriter(ROLL_INTERVAL, 0,
-        0, 0, ctx, "/tmp", "file", "", ".tmp", suffix, null,
-        SequenceFile.CompressionType.NONE, hdfsWriter,
-        timedRollerPool, proxy, new SinkCounter("test-bucket-writer-"
-        + System.currentTimeMillis()), 0, null, null, 30000,
-        Executors.newSingleThreadExecutor(), 0, 0);
+    // Need to override system time use for test so we know what to expect
+    final long testTime = System.currentTimeMillis();
+    Clock testClock = new Clock() {
+      public long currentTimeMillis() {
+        return testTime;
+      }
+    };
 
-      // Need to override system time use for test so we know what to expect
-      final long testTime = System.currentTimeMillis();
-      Clock testClock = new Clock() {
-          public long currentTimeMillis() {
-              return testTime;
-          }
-      };
-      bucketWriter.setClock(testClock);
+    MockHDFSWriter hdfsWriter = new MockHDFSWriter();
+    BucketWriter bucketWriter = new BucketWriter(
+        ROLL_INTERVAL, 0, 0, 0, ctx, "/tmp", "file", "", ".tmp", suffix, null,
+        SequenceFile.CompressionType.NONE, hdfsWriter, timedRollerPool, proxy,
+        new SinkCounter("test-bucket-writer-" + System.currentTimeMillis()), 0, null, null, 30000,
+        Executors.newSingleThreadExecutor(), 0, 0, testClock);
 
-      Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
-      bucketWriter.append(e);
+    Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
+    bucketWriter.append(e);
 
-      Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(Long.toString(testTime+1) + ".tmp"));
+    Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(Long.toString(testTime+1) + ".tmp"));
   }
 
-    @Test
-    public void testFileSuffixGiven() throws IOException, InterruptedException {
-        final int ROLL_INTERVAL = 1000; // seconds. Make sure it doesn't change in course of test
-        final String suffix = ".avro";
+  @Test
+  public void testFileSuffixGiven() throws IOException, InterruptedException {
+    final int ROLL_INTERVAL = 1000; // seconds. Make sure it doesn't change in course of test
+    final String suffix = ".avro";
 
-      MockHDFSWriter hdfsWriter = new MockHDFSWriter();
-      BucketWriter bucketWriter = new BucketWriter(ROLL_INTERVAL, 0,
-        0, 0, ctx, "/tmp", "file", "", ".tmp", suffix, null,
-        SequenceFile.CompressionType.NONE, hdfsWriter,
-        timedRollerPool, proxy, new SinkCounter(
-        "test-bucket-writer-" + System.currentTimeMillis()), 0,
-        null, null, 30000, Executors.newSingleThreadExecutor(), 0, 0);
+    // Need to override system time use for test so we know what to expect
+    final long testTime = System.currentTimeMillis();
+    Clock testClock = new Clock() {
+      public long currentTimeMillis() {
+        return testTime;
+      }
+    };
 
-        // Need to override system time use for test so we know what to expect
+    MockHDFSWriter hdfsWriter = new MockHDFSWriter();
+    BucketWriter bucketWriter = new BucketWriter(
+        ROLL_INTERVAL, 0, 0, 0, ctx, "/tmp", "file", "", ".tmp", suffix, null,
+        SequenceFile.CompressionType.NONE, hdfsWriter, timedRollerPool, proxy,
+        new SinkCounter("test-bucket-writer-" + System.currentTimeMillis()), 0, null, null, 30000,
+        Executors.newSingleThreadExecutor(), 0, 0, testClock);
 
-        final long testTime = System.currentTimeMillis();
+    Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
+    bucketWriter.append(e);
 
-        Clock testClock = new Clock() {
-            public long currentTimeMillis() {
-                return testTime;
-            }
-        };
-        bucketWriter.setClock(testClock);
-
-        Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
-        bucketWriter.append(e);
-
-        Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(
-          Long.toString(testTime + 1) + suffix + ".tmp"));
-    }
+    Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(
+    Long.toString(testTime + 1) + suffix + ".tmp"));
+  }
 
   @Test
   public void testFileSuffixCompressed()
@@ -316,14 +310,6 @@ public class TestBucketWriter {
     final String suffix = ".foo";
 
     MockHDFSWriter hdfsWriter = new MockHDFSWriter();
-    BucketWriter bucketWriter = new BucketWriter(ROLL_INTERVAL, 0, 0,
-      0, ctx, "/tmp", "file", "", ".tmp", suffix,
-      HDFSEventSink.getCodec("gzip"),
-      SequenceFile.CompressionType.BLOCK, hdfsWriter,
-      timedRollerPool, proxy, new SinkCounter("test-bucket-writer-"
-      + System.currentTimeMillis()), 0, null, null, 30000,
-      Executors.newSingleThreadExecutor(), 0, 0
-    );
 
     // Need to override system time use for test so we know what to expect
     final long testTime = System.currentTimeMillis();
@@ -333,7 +319,13 @@ public class TestBucketWriter {
         return testTime;
       }
     };
-    bucketWriter.setClock(testClock);
+
+    BucketWriter bucketWriter = new BucketWriter(
+        ROLL_INTERVAL, 0, 0, 0, ctx, "/tmp", "file", "", ".tmp", suffix,
+        HDFSEventSink.getCodec("gzip"), SequenceFile.CompressionType.BLOCK, hdfsWriter,
+        timedRollerPool, proxy, new SinkCounter("test-bucket-writer-" + System.currentTimeMillis()),
+        0, null, null, 30000, Executors.newSingleThreadExecutor(), 0, 0, testClock
+    );
 
     Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
     bucketWriter.append(e);
