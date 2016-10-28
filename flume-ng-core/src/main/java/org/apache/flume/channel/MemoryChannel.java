@@ -18,12 +18,9 @@
  */
 package org.apache.flume.channel;
 
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
-import javax.annotation.concurrent.GuardedBy;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import org.apache.flume.ChannelException;
 import org.apache.flume.ChannelFullException;
 import org.apache.flume.Context;
@@ -35,7 +32,10 @@ import org.apache.flume.instrumentation.ChannelCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import javax.annotation.concurrent.GuardedBy;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -173,7 +173,6 @@ public class MemoryChannel extends BasicChannelSemantics {
         }
         putList.clear();
       }
-      bytesRemaining.release(putByteCounter);
       putByteCounter = 0;
       takeByteCounter = 0;
 
@@ -371,5 +370,10 @@ public class MemoryChannel extends BasicChannelSemantics {
     }
     //Each event occupies at least 1 slot, so return 1.
     return 1;
+  }
+
+  @VisibleForTesting
+  int getBytesRemainingValue() {
+    return bytesRemaining.availablePermits();
   }
 }
