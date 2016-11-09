@@ -227,25 +227,17 @@ public class BucketPath {
   @VisibleForTesting
   protected static String replaceStaticString(String key) {
     String replacementString = "";
-    try {
-      InetAddress addr = InetAddress.getLocalHost();
-      String s = key.toLowerCase();
-      if (s.equals("localhost")) {
-        replacementString = addr.getHostName();
 
-      } else if (s.equals("ip")) {
-        replacementString = addr.getHostAddress();
-
-      } else if (s.equals("fqdn")) {
-        replacementString = addr.getCanonicalHostName();
-
-      } else {
-        throw new RuntimeException("The static escape string '" + key + "'"
-            + " was provided but does not match any of (localhost,IP,FQDN)");
-      }
-    } catch (UnknownHostException e) {
-      throw new RuntimeException("Flume wasn't able to parse the static escape "
-              + " sequence '" + key + "' due to UnkownHostException.", e);
+    String s = key.toLowerCase();
+    if (s.equals("localhost")) {
+      replacementString = InetAddressCache.hostName;
+    } else if (s.equals("ip")) {
+      replacementString = InetAddressCache.hostAddress;
+    } else if (s.equals("fqdn")) {
+      replacementString = InetAddressCache.canonicalHostName;
+    } else {
+      throw new RuntimeException("The static escape string '" + key + "'"
+          + " was provided but does not match any of (localhost,IP,FQDN)");
     }
     return replacementString;
   }
@@ -556,6 +548,23 @@ public class BucketPath {
   @VisibleForTesting
   public static Clock getClock() {
     return clock;
+  }
+
+  private static final class InetAddressCache {
+    static String hostName = null;
+    static String hostAddress = null;
+    static String canonicalHostName = null;
+
+    static {
+      try {
+        InetAddress addr = InetAddress.getLocalHost();
+        hostName = addr.getHostName();
+        hostAddress = addr.getHostAddress();
+        canonicalHostName = addr.getCanonicalHostName();
+      } catch (UnknownHostException e) {
+        throw new RuntimeException("Unable to get localhost", e);
+      }
+    }
   }
 }
 
