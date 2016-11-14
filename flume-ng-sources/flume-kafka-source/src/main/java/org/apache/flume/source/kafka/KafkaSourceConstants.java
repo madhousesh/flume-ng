@@ -29,6 +29,7 @@ public class KafkaSourceConstants {
   public static final String GROUP_ID = "group.id";
   public static final String GROUP_ID_FLUME = "groupId";
   public static final String PROPERTY_PREFIX = "kafka.";
+  public static final String SKIP_INVALID_MESSAGES = "skip.invalid.messages";
 
 
   public static final int DEFAULT_BATCH_SIZE = 1000;
