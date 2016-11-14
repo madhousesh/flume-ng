@@ -16,6 +16,7 @@
  */
 package org.apache.flume.source.kafka;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,21 +27,18 @@ import kafka.consumer.ConsumerIterator;
 import kafka.consumer.ConsumerTimeoutException;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
+import kafka.message.InvalidMessageException;
 import kafka.message.MessageAndMetadata;
 
 import org.apache.flume.*;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.conf.ConfigurationException;
 import org.apache.flume.event.EventBuilder;
-import org.apache.flume.instrumentation.SourceCounter;
 import org.apache.flume.instrumentation.kafka.KafkaSourceCounter;
 import org.apache.flume.source.AbstractPollableSource;
-import org.apache.flume.source.AbstractSource;
-import org.apache.flume.source.BasicSourceSemantics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A Source for Kafka which reads messages from a kafka topic.
@@ -82,6 +80,7 @@ public class KafkaSource extends AbstractPollableSource
   private Properties kafkaProps;
   private final List<Event> eventList = new ArrayList<Event>();
   private KafkaSourceCounter counter;
+  private boolean skipInvalidMessages = false;
 
   @Override
   protected Status doProcess() throws EventDeliveryException {
@@ -189,6 +188,8 @@ public class KafkaSource extends AbstractPollableSource
     kafkaAutoCommitEnabled = Boolean.parseBoolean(kafkaProps.getProperty(
             KafkaSourceConstants.AUTO_COMMIT_ENABLED));
 
+    skipInvalidMessages = context.getBoolean(KafkaSourceConstants.SKIP_INVALID_MESSAGES, false);
+
     if (counter == null) {
       counter = new KafkaSourceCounter(getName());
     }
@@ -250,6 +251,32 @@ public class KafkaSource extends AbstractPollableSource
       return true;
     } catch (ConsumerTimeoutException e) {
       return false;
+    } catch (InvalidMessageException ime) {
+      log.error("Invalid message arrived (" + getKafkaOffsets() + ")", ime);
+      if(skipInvalidMessages) {
+        log.info("Skipping incoming invalid message from kafka as configured via {}", KafkaSourceConstants.SKIP_INVALID_MESSAGES);
+        it.resetState();
+      } else {
+        log.info("Skipping invalid message from kafka is disabled via {} configuration parameter. " +
+            "Kafka consumer halts now and requires assistance: eg after stopping flume agents, " +
+            "consider manually increasing consumed offsets in zookeeper to higher than the " +
+            "current invalid offset then restart flume. Please note that manually changing offsets " +
+            "or automatically skipping invalid messages require careful consideration as it might " +
+            "result in unexpected data loss",
+            KafkaSourceConstants.SKIP_INVALID_MESSAGES);
+      }
+      return false;
+    }
+  }
+
+  private String getKafkaOffsets() {
+    if (it.kafka$consumer$ConsumerIterator$$currentTopicInfo() != null) {
+      long currentOffset = it.kafka$consumer$ConsumerIterator$$currentTopicInfo().getConsumeOffset();
+      long partitionId = (long) it.kafka$consumer$ConsumerIterator$$currentTopicInfo().partitionId();
+      String topic = it.kafka$consumer$ConsumerIterator$$currentTopicInfo().topic();
+      return MessageFormat.format("topic: {0} partitionId: {1} currentOffset: {2} ", topic, partitionId, currentOffset);
+    } else {
+      return "kafka topic info is not available for consumer, offset information is not available";
     }
   }
 
