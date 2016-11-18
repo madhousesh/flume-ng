@@ -3877,7 +3877,6 @@ Example for agent named a1:
   a1.channels = c1
   a1.sources.r1.interceptors = i1
   a1.sources.r1.interceptors.i1.type = host
-  a1.sources.r1.interceptors.i1.hostHeader = hostname
 
 Static Interceptor
 ~~~~~~~~~~~~~~~~~~
