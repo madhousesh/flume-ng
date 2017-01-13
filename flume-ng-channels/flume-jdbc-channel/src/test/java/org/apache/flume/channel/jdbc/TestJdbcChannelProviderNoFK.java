@@ -19,6 +19,7 @@ package org.apache.flume.channel.jdbc;
 
 import org.apache.flume.Context;
 
+@org.junit.Ignore
 public class TestJdbcChannelProviderNoFK extends BaseJdbcChannelProviderTest {
 
   @Override
