@@ -374,7 +374,7 @@ public class FileChannel extends BasicChannelSemantics {
 
   void close() {
     if (open) {
-      open = false;
+      setOpen(false);
       try {
         log.close();
       } catch (Exception e) {

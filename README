@@ -36,7 +36,7 @@ h2. Compiling Flume
 
 Compiling Flume requires the following tools:
 
-* Oracle Java JDK 1.6
+* Oracle Java JDK 1.7
 * Apache Maven 3.x
 
 Note: The Apache Flume build requires more memory than the default configuration.

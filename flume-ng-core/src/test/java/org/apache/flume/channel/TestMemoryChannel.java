@@ -19,8 +19,6 @@
 
 package org.apache.flume.channel;
 
-import org.apache.flume.Channel;
-
 import com.google.common.collect.ImmutableMap;
 import org.apache.flume.ChannelException;
 import org.apache.flume.Context;

@@ -337,10 +337,10 @@ public class TestKafkaChannel {
     Long fifthOffset = 0L;
     Long tenthOffset = 0L;
     Properties props = channel.getProducerProps();
-    KafkaProducer<String, byte[]> producer = new KafkaProducer<String, byte[]>(props);
+    KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props);
     for (int i = 1; i <= 50; i++) {
       ProducerRecord<String, byte[]> data =
-          new ProducerRecord<String, byte[]>(topic, null, String.valueOf(i).getBytes());
+          new ProducerRecord<>(topic, null, String.valueOf(i).getBytes());
       RecordMetadata recordMetadata = producer.send(data).get();
       if (i == 5) {
         fifthOffset = recordMetadata.offset();
@@ -364,9 +364,9 @@ public class TestKafkaChannel {
 
     // Commit 5th offset to kafka
     if (hasKafkaOffsets) {
-      Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<TopicPartition, OffsetAndMetadata>();
+      Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
       offsets.put(new TopicPartition(topic, 0), new OffsetAndMetadata(fifthOffset + 1));
-      KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<String, byte[]>(channel.getConsumerProps());
+      KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(channel.getConsumerProps());
       consumer.commitSync(offsets);
       consumer.close();
     }

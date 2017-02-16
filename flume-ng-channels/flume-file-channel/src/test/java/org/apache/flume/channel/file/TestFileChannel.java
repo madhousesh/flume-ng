@@ -26,6 +26,7 @@ import org.apache.flume.Event;
 import org.apache.flume.Transaction;
 import org.apache.flume.channel.file.FileChannel.FileBackedTransaction;
 import org.apache.flume.channel.file.FlumeEventQueue.InflightEventWrapper;
+import org.apache.flume.channel.file.instrumentation.FileChannelCounter;
 import org.apache.flume.conf.Configurables;
 import org.apache.flume.event.EventBuilder;
 import org.junit.After;
@@ -53,8 +54,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.flume.channel.file.instrumentation.FileChannelCounter;
 
 import static org.apache.flume.channel.file.TestUtils.compareInputAndOut;
 import static org.apache.flume.channel.file.TestUtils.consumeChannel;

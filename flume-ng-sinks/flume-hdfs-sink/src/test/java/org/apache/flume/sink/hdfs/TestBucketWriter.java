@@ -267,7 +267,8 @@ public class TestBucketWriter {
     Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
     bucketWriter.append(e);
 
-    Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(Long.toString(testTime+1) + ".tmp"));
+    Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(
+        Long.toString(testTime + 1) + ".tmp"));
   }
 
   @Test
@@ -276,7 +277,9 @@ public class TestBucketWriter {
     final String suffix = ".avro";
 
     // Need to override system time use for test so we know what to expect
+
     final long testTime = System.currentTimeMillis();
+
     Clock testClock = new Clock() {
       public long currentTimeMillis() {
         return testTime;
@@ -290,11 +293,12 @@ public class TestBucketWriter {
         new SinkCounter("test-bucket-writer-" + System.currentTimeMillis()), 0, null, null, 30000,
         Executors.newSingleThreadExecutor(), 0, 0, testClock);
 
+
     Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
     bucketWriter.append(e);
 
-    Assert.assertTrue("Incorrect suffix", hdfsWriter.getOpenedFilePath().endsWith(
-    Long.toString(testTime + 1) + suffix + ".tmp"));
+    Assert.assertTrue("Incorrect suffix",hdfsWriter.getOpenedFilePath().endsWith(
+        Long.toString(testTime + 1) + suffix + ".tmp"));
   }
 
   @Test
@@ -320,6 +324,8 @@ public class TestBucketWriter {
         timedRollerPool, proxy, new SinkCounter("test-bucket-writer-" + System.currentTimeMillis()),
         0, null, null, 30000, Executors.newSingleThreadExecutor(), 0, 0, testClock
     );
+
+
 
     Event e = EventBuilder.withBody("foo", Charsets.UTF_8);
     bucketWriter.append(e);

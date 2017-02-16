@@ -176,7 +176,6 @@ public class KafkaSink extends AbstractSink implements Configurable {
           eventTopic = topic;
         }
         eventKey = headers.get(KEY_HEADER);
-
         if (logger.isTraceEnabled()) {
           if (LogPrivacyUtil.allowLogRawData()) {
             logger.trace("{Event} " + eventTopic + " : " + eventKey + " : "

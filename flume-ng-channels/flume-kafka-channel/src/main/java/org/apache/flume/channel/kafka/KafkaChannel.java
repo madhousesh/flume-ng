@@ -309,7 +309,7 @@ public class KafkaChannel extends BasicChannelSemantics {
   private void migrateOffsets() {
     ZkUtils zkUtils = ZkUtils.apply(zookeeperConnect, ZK_SESSION_TIMEOUT, ZK_CONNECTION_TIMEOUT,
         JaasUtils.isZkSecurityEnabled());
-    KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<String, byte[]>(consumerProps);
+    KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(consumerProps);
     try {
       Map<TopicPartition, OffsetAndMetadata> kafkaOffsets = getKafkaOffsets(consumer);
       if (!kafkaOffsets.isEmpty()) {
@@ -342,7 +342,7 @@ public class KafkaChannel extends BasicChannelSemantics {
 
   private Map<TopicPartition, OffsetAndMetadata> getKafkaOffsets(
       KafkaConsumer<String, byte[]> client) {
-    Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<TopicPartition, OffsetAndMetadata>();
+    Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
     List<PartitionInfo> partitions = client.partitionsFor(topicStr);
     for (PartitionInfo partition : partitions) {
       TopicPartition key = new TopicPartition(topicStr, partition.partition());
@@ -355,7 +355,7 @@ public class KafkaChannel extends BasicChannelSemantics {
   }
 
   private Map<TopicPartition, OffsetAndMetadata> getZookeeperOffsets(ZkUtils client) {
-    Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<TopicPartition, OffsetAndMetadata>();
+    Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
     ZKGroupTopicDirs topicDirs = new ZKGroupTopicDirs(groupId, topicStr);
     List<String> partitions = asJavaListConverter(
         client.getChildrenParentMayNotExist(topicDirs.consumerOffsetDir())).asJava();

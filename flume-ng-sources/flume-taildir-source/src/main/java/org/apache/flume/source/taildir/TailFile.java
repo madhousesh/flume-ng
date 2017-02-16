@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -244,13 +243,6 @@ public class TailFile {
       setLastUpdated(now);
     } catch (IOException e) {
       logger.error("Failed closing file: " + path + ", inode: " + inode, e);
-    }
-  }
-
-  public static class CompareByLastModifiedTime implements Comparator<File> {
-    @Override
-    public int compare(File f1, File f2) {
-      return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
     }
   }
 
