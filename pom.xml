@@ -830,6 +830,8 @@ limitations under the License.
               <exclude>${test.exclude.pattern}</exclude>
               <!-- CDH-45148 Fix flaky tests in org.apache.flume.source.thriftLegacy.TestThriftLegacySource -->
               <exclude>**/TestThriftLegacySource.java</exclude>
+              <!-- CDH-51264 Fix flaky test org.apache.flume.channel.file.TestFileChannelRestart.testCompressBackup -->
+              <exclude>**/TestFileChannelRestart.java</exclude>
             </excludes>
           </configuration>
         </plugin>
