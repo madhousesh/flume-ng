@@ -19,9 +19,12 @@
 
 package org.apache.flume.formatter.output;
 
-import java.io.File;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.flume.Context;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultPathManager implements PathManager {
 
@@ -30,7 +33,7 @@ public class DefaultPathManager implements PathManager {
   private AtomicInteger fileIndex;
   private String filePrefix;
   private String extension;
-
+  private HashMap<String, String> emptyMap = new HashMap<>();
   private static final String DEFAULT_FILE_PREFIX = "";
   private static final String DEFAULT_FILE_EXTENSION = "";
   private static final String FILE_EXTENSION = "extension";
@@ -48,12 +51,14 @@ public class DefaultPathManager implements PathManager {
   @Override
   public File nextFile() {
     StringBuilder sb = new StringBuilder();
-    sb.append(filePrefix).append(seriesTimestamp).append("-");
+    sb.append(filePrefix).append("-");
     sb.append(fileIndex.incrementAndGet());
     if (extension.length() > 0) {
       sb.append(".").append(extension);
     }
-    currentFile = new File(baseDirectory, sb.toString());
+    String fileName = sb.toString();
+    fileName = BucketPath.escapeString(fileName, emptyMap, TimeZone.getDefault(), false, 0, 0, true);
+    currentFile = new File(baseDirectory, fileName);
 
     return currentFile;
   }
