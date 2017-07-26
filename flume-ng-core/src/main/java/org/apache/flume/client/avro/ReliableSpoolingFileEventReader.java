@@ -255,7 +255,7 @@ public class ReliableSpoolingFileEventReader implements ReliableEventReader {
               !fileName.startsWith(".") &&
               includePattern.matcher(fileName).matches() &&
               !ignorePattern.matcher(fileName).matches() &&
-                  (System.currentTimeMillis() - candidate.toFile().lastModified() < 4000)) {
+                  (System.currentTimeMillis() - candidate.toFile().lastModified() > 4000)) {
             candidateFiles.add(candidate.toFile());
           }
 
