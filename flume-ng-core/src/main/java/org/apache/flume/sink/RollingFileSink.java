@@ -155,7 +155,6 @@ public class RollingFileSink extends AbstractSink implements Configurable {
                     outputStream.close();
                     sinkCounter.incrementConnectionClosedCount();
                     shouldRotate = false;
-                    renameFile(currentFilePath);
                 } catch (IOException e) {
                     sinkCounter.incrementConnectionFailedCount();
                     throw new EventDeliveryException("Unable to rotate file "
@@ -163,6 +162,7 @@ public class RollingFileSink extends AbstractSink implements Configurable {
                 } finally {
                     serializer = null;
                     outputStream = null;
+                    renameFile(currentFilePath);
                 }
                 pathController.rotate();
             }
@@ -244,13 +244,13 @@ public class RollingFileSink extends AbstractSink implements Configurable {
                 serializer.beforeClose();
                 outputStream.close();
                 sinkCounter.incrementConnectionClosedCount();
-                renameFile(currentFilePath);
             } catch (IOException e) {
                 sinkCounter.incrementConnectionFailedCount();
                 logger.error("Unable to close output stream. Exception follows.", e);
             } finally {
                 outputStream = null;
                 serializer = null;
+                renameFile(currentFilePath);
             }
         }
         if (rollInterval > 0) {
@@ -268,7 +268,6 @@ public class RollingFileSink extends AbstractSink implements Configurable {
         logger.info("RollingFile sink {} stopped. Event metrics: {}",
                 getName(), sinkCounter);
     }
-
 
 
     private void renameFile(String currentFilePath) {
