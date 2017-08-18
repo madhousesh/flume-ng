@@ -27,7 +27,8 @@ public enum InterceptorType {
       org.apache.flume.interceptor.RegexFilteringInterceptor.Builder.class),
   REGEX_EXTRACTOR(org.apache.flume.interceptor.RegexExtractorInterceptor.Builder.class),
   REMOVE_HEADER(org.apache.flume.interceptor.RemoveHeaderInterceptor.Builder.class),
-  SEARCH_REPLACE(org.apache.flume.interceptor.SearchAndReplaceInterceptor.Builder.class);
+  SEARCH_REPLACE(org.apache.flume.interceptor.SearchAndReplaceInterceptor.Builder.class),
+  TIMESTAMP_PERFORMADRTB(org.apache.flume.interceptor.PerformadRTBInterceptor.Builder.class);
 
   private final Class<? extends Interceptor.Builder> builderClass;
 

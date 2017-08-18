@@ -380,7 +380,16 @@ limitations under the License.
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.24</version>
+    </dependency>
+    <dependency>
+      <groupId>com.kritter.thrift</groupId>
+      <artifactId>structs</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
 
 </project>
